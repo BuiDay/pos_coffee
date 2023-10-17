@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hook';
 import { getCategories } from '../../store/features/category/categorySilce';
 
@@ -6,7 +6,7 @@ import { AiOutlinePlus, AiOutlineMinus, AiFillDelete } from 'react-icons/ai'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getGetProducts } from '../../store/features/products/productsSilce';
 import { IProduct } from '../../interface/interface';
-import { addOrder } from '../../store/features/order/orderSilce';
+import { addOrder, increaseOrder } from '../../store/features/order/orderSilce';
 
 const Order = () => {
     const dispatch = useAppDispatch();
@@ -15,7 +15,6 @@ const Order = () => {
     const { categories } = useAppSelector(state => state.category);
     const { products } = useAppSelector(state => state.products);
     const orders = useAppSelector(state => state.orders);
-    console.log(orders)
 
     useEffect(() => {
         dispatch(getCategories())
@@ -48,6 +47,15 @@ const Order = () => {
     const handleDelete = () =>{
         
     }
+
+
+    const increaseQuanity = (items:{product:IProduct,quanity:number}) => {
+        const productId = items.product._id
+        const _table = table;
+        dispatch(increaseOrder({productId,_table}))
+    }
+
+    
 
     return (
         <div className='flex justify-between h-[88vh]'>
@@ -102,7 +110,7 @@ const Order = () => {
                                             <p className='text-[16px]'>{item.product.name}</p>
                                         </div>
                                         <div className='flex justify-between items-center bg-white rounded-xl'>
-                                            <div className='bg-orange-400 p-1 cursor-pointer'>
+                                            <div className='bg-orange-400 p-1 cursor-pointer' onClick={()=>increaseQuanity(item)}>
                                                 <AiOutlinePlus />
                                             </div>
                                             <input type='text' defaultValue={item.quantity} className='w-[30px] text-center bg-transparent outline-none'></input>
@@ -127,7 +135,7 @@ const Order = () => {
                 <div className='h-[20%] flex flex-col justify-between'>
                     <div className='flex justify-between px-5 text-[18px] font-semibold'>
                         <span>Tổng tiền:</span>
-                        <span> {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(orders[table-1] && orders[table-1].order.total_amount))}</span>
+                        <span> {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(orders[table-1] && orders[table-1].order.total_amount || 0))}</span>
                     </div>
                     <div className='text-white text-[18px]'>
                         <div className='flex w-full'>

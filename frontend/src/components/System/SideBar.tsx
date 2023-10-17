@@ -44,7 +44,6 @@ const SideBar: React.FC = () => {
 
 
     const handleNavigate = (key: any) => {
-        console.log(key[0])
         if (key[0] !== "logout") {
             // if (key.length > 1)
                 navigate(`${key[0]}`)

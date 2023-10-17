@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, createAction, PayloadAction} from "@reduxjs/toolkit"
 import categoryService from "./orderService"
 import { IProduct } from "../../../interface/interface"
-
+import { current } from '@reduxjs/toolkit';
 interface IBill {
     date: string,
     total_amount: Number,
@@ -49,6 +49,25 @@ export const orderSlice = createSlice({
             }
             const index = action.payload.table;
             state[index-1] = order
+        },
+        increaseOrder:(state,action) => {
+            console.log(action.payload);
+            const orderTemp = state[action.payload._table - 1].order.items
+            const index = orderTemp.findIndex(x => x.product._id === action.payload.productId);
+            const item = orderTemp.find(x => x.product._id === action.payload.productId);
+            const itemTemp = {...item,quantity: 1 + Number(item?.quantity) || 0}
+            const indexTable = action.payload._table - 1;
+            console.log(current(state[indexTable]))
+            // state[indexTable -1] = {
+            //     table: indexTable -1,
+            //     order:{
+            //         ...state[indexTable -1].order,
+            //         items:[
+            //             ...state[indexTable -1].order.items
+            //             [index] : itemTemp
+            //         ]
+            //     }
+            // }
         }
     },
     extraReducers:(builder) =>{
@@ -63,5 +82,5 @@ export const orderSlice = createSlice({
     },
 })
 
-export const { addOrder } = orderSlice.actions;
+export const { addOrder, increaseOrder} = orderSlice.actions;
 export default orderSlice.reducer;
